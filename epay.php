@@ -54,7 +54,7 @@ file_put_contents("log.txt", $log_content, FILE_APPEND);
 if ($result["code"] == 1) {
     echo json_encode([
         "code" => 1,
-        "msg" => "支付成功",
+        "msg" => "订单创建成功",
         "qrcode" => $result["qrcode"] ?? "",
         "payurl" => $result["payurl"] ?? "",
         "out_trade_no" => $order_id,
