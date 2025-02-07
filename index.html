@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qing🚀 - 在线收款</title>
+    
+    <!-- 🚀 导入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <script src="./js/app.js"></script>
+    <!-- 🚀 Google Fonts Kanit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: "Kanit", sans-serif; }
+
+        .fade-in { opacity: 0; transform: translateY(15px); transition: all 0.6s ease-out; }
+        .fade-in.active { opacity: 1; transform: translateY(0); }
+
+        .qr-loading {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #22c55e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: block;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+            #cursor {
+            position: fixed;
+            width: 16px;
+            height: 16px;
+            background: #000;
+            border-radius: 8px;
+            opacity: 0.25;
+            z-index: 10086;
+            pointer-events: none;
+            transition: 0.2s ease-in-out;
+            transition-property: background, opacity, transform;
+        }
+
+        #cursor.hidden {
+            opacity: 0;
+        }
+
+        #cursor.hover {
+            opacity: 0.1;
+            transform: scale(2.5);
+        }
+
+        #cursor.active {
+            opacity: 0.5;
+            transform: scale(0.5);
+        }
+
+        /*************************/
+
+        a {
+            color: rgb(0, 93, 146);
+            opacity: .7;
+            transition: opacity .2s;
+            text-decoration: none;
+        }
+
+        a:hover {
+            opacity: 1;
+        }
+
+        #clickME {
+            cursor: pointer;
+            display: inline-block;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen px-4">
+    <div class="bg-white shadow-xl rounded-lg p-6 max-w-md w-full fade-in">
+        <h2 class="text-2xl font-bold text-center text-gray-900 mb-4">💰 Qing - 在线收款 🚀</h2>
+
+        <div class="space-y-2">
+            <label class="block text-gray-700 font-medium flex items-center">
+                <span class="text-blue-500 text-lg">💵</span> <span class="ml-2">选择支付金额</span>
+            </label>
+            <select id="amount-select" class="w-full h-10 p-2 border rounded-md bg-gray-100 focus:ring-green-500 focus:border-green-500 transition">
+                <option value="10">¥10</option>
+                <option value="20">¥20</option>
+                <option value="30">¥30</option>
+                <option value="40">¥40</option>
+                <option value="50">¥50</option>
+                <option value="60">¥60</option>
+                <option value="70">¥70</option>
+                <option value="80">¥80</option>
+                <option value="90">¥90</option>
+                <option value="100">¥100</option>
+                <option value="custom">其他</option>
+            </select>
+            <input type="number" id="custom-amount" class="w-full h-10 p-2 border rounded-md bg-gray-100 focus:ring-green-500 focus:border-green-500 transition hidden" placeholder="请输入自定义金额">
+        </div>
+
+        <div class="mt-4">
+            <label class="block text-gray-700 font-medium flex items-center">
+                <span class="text-blue-500 text-lg">💳</span> <span class="ml-2">选择支付方式</span>
+            </label>
+            <div class="flex gap-2 mt-2">
+                <button id="wxpay-btn" class="h-10 flex-1 rounded-md bg-green-500 text-white hover:bg-green-600 focus:ring-2 focus:ring-green-500 selected">微信支付</button>
+                <button id="alipay-btn" class="h-10 flex-1 rounded-md bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500">支付宝</button>
+            </div>
+        </div>
+
+        <button id="submit" class="w-full h-10 mt-4 bg-gray-900 text-white rounded-md hover:bg-gray-800 focus:ring-2 focus:ring-gray-900">前往付款</button>
+
+        <p id="result" class="text-center text-red-500 mt-4 hidden"></p>
+
+        <div id="qrcode-container" class="flex flex-col items-center mt-4 bg-gray-100 p-4 rounded-lg shadow-lg hidden">
+            <p id="order-info" class="text-gray-700 text-lg font-medium"></p>
+            <div id="qr-loader" class="qr-loading"></div>
+            <div id="qrcode" class="hidden mt-3"></div>
+        </div>
+    </div>
+<script>
+    
+        let selectedPayment = "wxpay";
+        let payUrl = "";
+        let checkInterval = null;
+
+        window.onload = () => {
+            document.querySelector('.fade-in').classList.add('active');
+        };
+
+        document.getElementById('amount-select').addEventListener('change', function() {
+            const customAmount = document.getElementById('custom-amount');
+            if (this.value === 'custom') {
+                customAmount.classList.remove('hidden');
+                this.classList.add('hidden');
+            } else {
+                customAmount.classList.add('hidden');
+                this.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('submit').addEventListener('click', function() {
+            const amountSelect = document.getElementById('amount-select');
+            const customAmount = document.getElementById('custom-amount').value;
+            const qrcodeContainer = document.getElementById('qrcode-container');
+            const qrcodeDiv = document.getElementById('qrcode');
+            const qrLoader = document.getElementById('qr-loader');
+            const orderInfo = document.getElementById('order-info');
+            const submitButton = document.getElementById('submit');
+
+            let amount = amountSelect.value === 'custom' ? customAmount : amountSelect.value;
+
+            if (!amount || parseFloat(amount) <= 0) {
+                alert("❌ 请输入有效的支付金额");
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.innerText = "正在创建订单...";
+
+            qrcodeContainer.classList.remove("hidden");
+            qrcodeDiv.classList.add("hidden");
+            qrLoader.style.display = "block";
+
+            fetch('epay.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `amount=${amount}&payment_method=${selectedPayment}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 1) {
+                    payUrl = data.payurl;
+
+                    orderInfo.innerHTML = `📜 订单号: ${data.out_trade_no} | 💰 金额: ¥${amount}`;
+                    submitButton.innerText = "无法扫码? 🔗 点这里";
+                    submitButton.onclick = function () {
+                        window.location.href = payUrl;
+                    };
+
+                    setTimeout(() => {
+                        qrLoader.style.display = "none";
+                        qrcodeDiv.classList.remove("hidden");
+                        qrcodeDiv.innerHTML = "";
+                        new QRCode(qrcodeDiv, { text: data.qrcode || payUrl, width: 160, height: 160 });
+
+                        checkInterval = setInterval(() => checkOrderStatus(data.out_trade_no), 3000);
+                    }, 1000);
+                }
+                submitButton.disabled = false;
+            });
+        });
+
+        function checkOrderStatus(orderId) {
+            fetch(`pay/check_order.php?order_id=${orderId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        clearInterval(checkInterval);
+                        window.location.href = "/success.html";
+                    }
+                });
+        }
+    </script>
+    <script>
+        var CURSOR;
+
+        Math.lerp = (a, b, n) => (1 - n) * a + n * b;
+
+        const getStyle = (el, attr) => {
+            try {
+                return window.getComputedStyle
+                    ? window.getComputedStyle(el)[attr]
+                    : el.currentStyle[attr];
+            } catch (e) { }
+            return "";
+        };
+
+        class Cursor {
+            constructor() {
+                this.pos = { curr: null, prev: null };
+                this.pt = [];
+                this.create();
+                this.init();
+                this.render();
+            }
+
+            move(left, top) {
+                this.cursor.style["left"] = `${left}px`;
+                this.cursor.style["top"] = `${top}px`;
+            }
+
+            create() {
+                if (!this.cursor) {
+                    this.cursor = document.createElement("div");
+                    this.cursor.id = "cursor";
+                    this.cursor.classList.add("hidden");
+                    document.body.append(this.cursor);
+                }
+
+                var el = document.getElementsByTagName('*');
+                for (let i = 0; i < el.length; i++)
+                    if (getStyle(el[i], "cursor") == "pointer")
+                        this.pt.push(el[i].outerHTML);
+                document.body.appendChild((this.scr = document.createElement("style")));
+                this.scr.innerHTML = `* {cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' width='8px' height='8px'><circle cx='4' cy='4' r='4' opacity='.5'/></svg>") 4 4, auto !important}`;
+            }
+
+            refresh() {
+                this.scr.remove();
+                this.cursor.classList.remove("hover");
+                this.cursor.classList.remove("active");
+                this.pos = { curr: null, prev: null };
+                this.pt = [];
+                this.create();
+                this.init();
+                this.render();
+            }
+
+            init() {
+                document.onmouseover = e => this.pt.includes(e.target.outerHTML) && this.cursor.classList.add("hover");
+                document.onmouseout = e => this.pt.includes(e.target.outerHTML) && this.cursor.classList.remove("hover");
+                document.onmousemove = e => { (this.pos.curr == null) && this.move(e.clientX - 8, e.clientY - 8); this.pos.curr = { x: e.clientX - 8, y: e.clientY - 8 }; this.cursor.classList.remove("hidden"); };
+                document.onmouseenter = e => this.cursor.classList.remove("hidden");
+                document.onmouseleave = e => this.cursor.classList.add("hidden");
+                document.onmousedown = e => this.cursor.classList.add("active");
+                document.onmouseup = e => this.cursor.classList.remove("active");
+            }
+
+            render() {
+                if (this.pos.prev) {
+                    this.pos.prev.x = Math.lerp(this.pos.prev.x, this.pos.curr.x, 0.15);
+                    this.pos.prev.y = Math.lerp(this.pos.prev.y, this.pos.curr.y, 0.15);
+                    this.move(this.pos.prev.x, this.pos.prev.y);
+                } else {
+                    this.pos.prev = this.pos.curr;
+                }
+                requestAnimationFrame(() => this.render());
+            }
+        }
+
+        (() => {
+            CURSOR = new Cursor();
+        })();
+    
+</script>
+    
+</body>
+</html>

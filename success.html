@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>支付成功!!!</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+    <style>
+    /* Template */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap");
+
+body {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  background-size: 24px 24px;
+  background-image: linear-gradient(to right, #e7e9e7 1px, transparent 1px),
+    linear-gradient(to bottom, #e7e9e7 1px, transparent 1px);
+  background-color: #eff1ef;
+  font-family: "Inter";
+  color: #1d211c;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body::before {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background-size: 96px 96px;
+  background-image: linear-gradient(to right, #dfe2df 1px, transparent 1px),
+    linear-gradient(to bottom, #dfe2df 1px, transparent 1px);
+}
+#texture {
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  opacity: 0.08;
+  pointer-events: none;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  filter: contrast(200%);
+}
+#signature {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  font-family: Georgia;
+  font-style: italic;
+  font-size: 12px;
+  color: #60655f;
+  text-decoration: none;
+  transition: color 100ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+#signature:hover {
+  color: #1d211c;
+}
+
+h1,
+p {
+  animation: translate-y-100 300ms cubic-bezier(0.165, 0.84, 0.44, 1.2) forwards;
+  opacity: 0;
+}
+
+h1 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 24px;
+  animation-delay: 1100ms;
+}
+
+p {
+  margin-top: 0;
+  font-size: 13px;
+  color: #60655f;
+  animation-delay: 1150ms;
+}
+
+.cta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  animation: translate-y-100 600ms 2200ms cubic-bezier(0.19, 1, 0.22, 1)
+    forwards;
+  opacity: 0;
+}
+
+button {
+  position: relative;
+  height: 32px;
+  width: 100%;
+  border: 0;
+  border-radius: 5px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #46a758;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 1px 3px 0 rgba(24, 25, 22, 0.1), 0 1px 2px -1px rgba(24, 25, 22, 0.1);
+  border: 1px solid #2a7e3b;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: transform 200ms cubic-bezier(0.165, -0.84, 0.44, 2),
+    opacity 200ms ease, background-color 100ms ease;
+  cursor: pointer;
+}
+button:hover {
+  background: #2a7e3b;
+}
+button:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04) inset;
+}
+button:active:before {
+  opacity: 0.4;
+}
+
+button.secondary {
+  color: #181916;
+  background: white;
+  box-shadow: var(--box-shadow);
+  border: 1px solid #d9d9d6;
+}
+button.secondary:hover {
+  background: #f8f8f6;
+}
+button.secondary:active {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04) inset;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 448px;
+  padding: 32px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/*
+Apply left & right only box-shadow to a psuedo element using clip-path.
+
+We cannot apply this to parent directly as clip-path clips the dashed border.
+
+Only the last card should have a bottom-facing box-shadow.
+*/
+.card:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01), 0 2px 4px rgba(0, 0, 0, 0.04);
+  border-radius: 5px;
+  clip-path: inset(0px -4px 0px -4px);
+}
+.card:nth-of-type(3):before {
+  clip-path: inset(0px -4px -4px -4px);
+}
+
+.card:first-of-type {
+  animation: translate-y-100 500ms 1000ms cubic-bezier(0.19, 1, 0.22, 1.2)
+    forwards;
+  opacity: 0;
+  z-index: 0;
+}
+
+.card .icon {
+  width: 64px;
+  height: 64px;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  background: linear-gradient(to top, #f2f2f280, #e0e0e080);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.06) inset;
+  display: grid;
+  place-content: center;
+  margin-bottom: 1rem;
+}
+
+.card .icon:before {
+  content: "\2713";
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.03);
+  font-family: "arial";
+  font-size: 32px;
+  color: #46a758;
+}
+
+.card:not(:first-of-type) {
+  transform-origin: top;
+  animation: unfold 500ms 1700ms cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+  -webkit-transform: perspective(500px) rotateX(-0.25turn);
+  z-index: 1;
+  opacity: 0.9;
+}
+.card:nth-of-type(3) {
+  animation-delay: 1950ms;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 1.4);
+  z-index: 2;
+}
+
+/*
+Use a pseudo element for dashed line.
+
+A border-top applied to parent would curve due to border-radius.
+*/
+.card:not(:first-of-type):after {
+  position: absolute;
+  top: -0.5px;
+  left: 1%;
+  content: "";
+  width: 98%;
+  height: 1px;
+  border-top: 1px #d7dad7 dashed;
+}
+
+ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+ul > li {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+ul > li span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #212121;
+}
+ul > li span:first-of-type {
+  color: #757575;
+}
+
+/* Animations */
+@keyframes translate-y-100 {
+  0% {
+    transform: scale(0.9) translateY(0.5rem);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes unfold {
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+</style>
+<!-- partial:index.partial.html -->
+<!-- Reciept top-half -->
+<div id="wrapper">
+  <div class="card">
+    <div class="icon">
+    </div>
+    <h1>
+      Hi, 订单支付成功!
+    </h1>
+    <p>
+     Hi, the order payment is successful!!
+    </p>
+  </div>
+  <!-- Reciept bottom-half -->
+  <div class="card">
+    <ul>
+      <li>
+        <span>订单号</span>
+        <span id="order-id">加载中</span>
+      </li>
+      <li>
+        <span>支付方式</span>
+        <span id="payment-type">加载中</span>
+      </li>
+      <li>
+        <span>支付金额</span>
+        <span id="payment-amount">加载中</span>
+      </li>
+      <li>
+        <span>支付时间</span>
+        <span id="payment-time">加载中</span>
+      </li>
+    </ul>
+  </div>
+  <!-- Reciept CTA -->
+  <div class="card">
+    <div class="cta-row">
+       
+      <button class="secondary" onclick="window.location.href='/'">
+    返回首页
+</button>
+<button class="primary" onclick="window.location.href='https://t.me/QinGdo'">
+    联系晴宝
+</button>
+
+    </div>
+  </div>
+</div>
+<script>
+   
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param) || "N/A";
+    }
+
+    window.onload = function() {
+        document.getElementById("order-id").innerText = getQueryParam("out_trade_no");
+        document.getElementById("payment-type").innerText = getQueryParam("type");
+        document.getElementById("payment-amount").innerText = "¥" + getQueryParam("money");
+        document.getElementById("payment-time").innerText = getQueryParam("pay_time");
+    };
+  </script>
+  
+  
+</body>
+</html>
