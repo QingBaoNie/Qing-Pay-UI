@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>支付成功!!!</title>
-  <link rel="stylesheet" href="./style.css">
-
-</head>
-
-<body>
-    <style>
-    /* Template */
+/* 基础样式 */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap");
 
 body {
+  font-family: "Inter", "Kanit", sans-serif;
   display: grid;
   place-items: center;
   height: 100vh;
@@ -20,11 +10,12 @@ body {
   background-image: linear-gradient(to right, #e7e9e7 1px, transparent 1px),
     linear-gradient(to bottom, #e7e9e7 1px, transparent 1px);
   background-color: #eff1ef;
-  font-family: "Inter";
   color: #1d211c;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* 网格背景 */
 body::before {
   content: "";
   position: fixed;
@@ -36,41 +27,15 @@ body::before {
   background-image: linear-gradient(to right, #dfe2df 1px, transparent 1px),
     linear-gradient(to bottom, #dfe2df 1px, transparent 1px);
 }
-#texture {
-  bottom: 0;
-  height: 100%;
-  left: 0;
-  opacity: 0.08;
-  pointer-events: none;
-  position: fixed;
-  width: 100%;
-  z-index: 100;
-  filter: contrast(200%);
-}
-#signature {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  font-family: Georgia;
-  font-style: italic;
-  font-size: 12px;
-  color: #60655f;
-  text-decoration: none;
-  transition: color 100ms cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-#signature:hover {
-  color: #1d211c;
-}
 
-h1,
-p {
+/* 文本样式 */
+h1, p {
   animation: translate-y-100 300ms cubic-bezier(0.165, 0.84, 0.44, 1.2) forwards;
   opacity: 0;
 }
 
 h1 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.5rem 0;
   font-size: 24px;
   animation-delay: 1100ms;
 }
@@ -82,21 +47,11 @@ p {
   animation-delay: 1150ms;
 }
 
-.cta-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  animation: translate-y-100 600ms 2200ms cubic-bezier(0.19, 1, 0.22, 1)
-    forwards;
-  opacity: 0;
-}
-
+/* 按钮样式 */
 button {
   position: relative;
   height: 32px;
   width: 100%;
-  border: 0;
   border-radius: 5px;
   line-height: 1;
   display: flex;
@@ -114,30 +69,29 @@ button {
     opacity 200ms ease, background-color 100ms ease;
   cursor: pointer;
 }
+
 button:hover {
   background: #2a7e3b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
+
 button:active {
   transform: scale(0.98);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04) inset;
-}
-button:active:before {
-  opacity: 0.4;
 }
 
 button.secondary {
   color: #181916;
   background: white;
-  box-shadow: var(--box-shadow);
   border: 1px solid #d9d9d6;
 }
+
 button.secondary:hover {
   background: #f8f8f6;
 }
-button.secondary:active {
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04) inset;
-}
 
+/* 卡片样式 */
 .card {
   position: relative;
   display: flex;
@@ -150,13 +104,6 @@ button.secondary:active {
   box-sizing: border-box;
 }
 
-/*
-Apply left & right only box-shadow to a psuedo element using clip-path.
-
-We cannot apply this to parent directly as clip-path clips the dashed border.
-
-Only the last card should have a bottom-facing box-shadow.
-*/
 .card:before {
   content: "";
   position: absolute;
@@ -168,13 +115,14 @@ Only the last card should have a bottom-facing box-shadow.
   border-radius: 5px;
   clip-path: inset(0px -4px 0px -4px);
 }
+
+/* Success页面特定样式 */
 .card:nth-of-type(3):before {
   clip-path: inset(0px -4px -4px -4px);
 }
 
 .card:first-of-type {
-  animation: translate-y-100 500ms 1000ms cubic-bezier(0.19, 1, 0.22, 1.2)
-    forwards;
+  animation: translate-y-100 500ms 1000ms cubic-bezier(0.19, 1, 0.22, 1.2) forwards;
   opacity: 0;
   z-index: 0;
 }
@@ -212,17 +160,13 @@ Only the last card should have a bottom-facing box-shadow.
   z-index: 1;
   opacity: 0.9;
 }
+
 .card:nth-of-type(3) {
   animation-delay: 1950ms;
   animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 1.4);
   z-index: 2;
 }
 
-/*
-Use a pseudo element for dashed line.
-
-A border-top applied to parent would curve due to border-radius.
-*/
 .card:not(:first-of-type):after {
   position: absolute;
   top: -0.5px;
@@ -233,6 +177,7 @@ A border-top applied to parent would curve due to border-radius.
   border-top: 1px #d7dad7 dashed;
 }
 
+/* 订单信息列表样式 */
 ul {
   list-style: none;
   display: flex;
@@ -242,21 +187,111 @@ ul {
   padding: 0;
   width: 100%;
 }
+
 ul > li {
   width: 100%;
   display: flex;
   justify-content: space-between;
 }
+
 ul > li span {
   font-size: 12px;
   font-weight: 500;
   color: #212121;
 }
+
 ul > li span:first-of-type {
   color: #757575;
 }
 
-/* Animations */
+/* CTA行样式 */
+.cta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  animation: translate-y-100 600ms 2200ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  opacity: 0;
+}
+
+/* 动画效果 */
+.fade-in { 
+    opacity: 0; 
+    transform: translateY(15px); 
+    transition: all 0.6s ease-out; 
+}
+
+.fade-in.active { 
+    opacity: 1; 
+    transform: translateY(0); 
+}
+
+/* 加载动画 */
+.qr-loading {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #22c55e;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: block;
+    margin: auto;
+}
+
+/* 自定义光标 */
+#cursor {
+    position: fixed;
+    width: 16px;
+    height: 16px;
+    background: #000;
+    border-radius: 8px;
+    opacity: 0.25;
+    z-index: 10086;
+    pointer-events: none;
+    transition: 0.2s ease-in-out;
+    transition-property: background, opacity, transform;
+}
+
+#cursor.hidden {
+    opacity: 0;
+}
+
+#cursor.hover {
+    opacity: 0.1;
+    transform: scale(2.5);
+}
+
+#cursor.active {
+    opacity: 0.5;
+    transform: scale(0.5);
+}
+
+/* 选中状态 */
+.selected {
+    opacity: 1;
+    transform: scale(0.98);
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    font-weight: bold;
+    position: relative;
+}
+
+.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+}
+
+/* 支付按钮 */
+#wxpay-btn, #alipay-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 动画关键帧 */
 @keyframes translate-y-100 {
   0% {
     transform: scale(0.9) translateY(0.5rem);
@@ -272,70 +307,8 @@ ul > li span:first-of-type {
     opacity: 1;
   }
 }
-</style>
-<!-- partial:index.partial.html -->
-<!-- Reciept top-half -->
-<div id="wrapper">
-  <div class="card">
-    <div class="icon">
-    </div>
-    <h1>
-      Hi, 订单支付成功!
-    </h1>
-    <p>
-     Hi, the order payment is successful!!
-    </p>
-  </div>
-  <!-- Reciept bottom-half -->
-  <div class="card">
-    <ul>
-      <li>
-        <span>订单号</span>
-        <span id="order-id">加载中</span>
-      </li>
-      <li>
-        <span>支付方式</span>
-        <span id="payment-type">加载中</span>
-      </li>
-      <li>
-        <span>支付金额</span>
-        <span id="payment-amount">加载中</span>
-      </li>
-      <li>
-        <span>支付时间</span>
-        <span id="payment-time">加载中</span>
-      </li>
-    </ul>
-  </div>
-  <!-- Reciept CTA -->
-  <div class="card">
-    <div class="cta-row">
-       
-      <button class="secondary" onclick="window.location.href='/'">
-    返回首页
-</button>
-<button class="primary" onclick="window.location.href='https://t.me/QinGdo'">
-    联系晴宝
-</button>
 
-    </div>
-  </div>
-</div>
-<script>
-   
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param) || "N/A";
-    }
-
-    window.onload = function() {
-        document.getElementById("order-id").innerText = getQueryParam("out_trade_no");
-        document.getElementById("payment-type").innerText = getQueryParam("type");
-        document.getElementById("payment-amount").innerText = "¥" + getQueryParam("money");
-        document.getElementById("payment-time").innerText = getQueryParam("pay_time");
-    };
-  </script>
-  
-  
-</body>
-</html>
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
